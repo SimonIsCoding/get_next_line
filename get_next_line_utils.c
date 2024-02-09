@@ -5,73 +5,62 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/31 19:28:04 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/04 13:34:50 by simarcha         ###   ########.fr       */
+/*   Created: 2024/02/09 15:45:21 by simarcha          #+#    #+#             */
+/*   Updated: 2024/02/09 17:10:45 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strdup(const char *s1)
-{
-	char	*cpy;
-	int		i;
-
-	i = 0;
-	while (s1[i])
-		i++;
-	cpy = (char *)malloc(sizeof(*s1) * (i + 1));
-	if (!cpy)
-		return (NULL);
-	cpy[i] = '\0';
-	while (i--)
-		cpy[i] = s1[i];
-	return (cpy);
-}
-
-/*int	ft_strlen(const char *s)
+int	ft_strlen(char *s)
 {
 	int	i;
 
 	i = 0;
-	while (s[i])
+	while (s[i] != '\0')
 		i++;
 	return (i);
-}*/
-
-char	*ft_strrchr(const char *s, int c)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	while (s[--i] != '\0')
-		if ((char)s[i] == (char)c)
-			return ((char *)s + i);
-	if ((char)c == s[i])
-		return ((char *)s + i);
-	return (NULL);
 }
 
-char	*ft_read_the_line(char *s, int c)
+void	*ft_calloc(size_t count, size_t size)
 {
-	char			*line;
-	static ssize_t	start;
-	char			buf[1024];
+	char	*str;
+	size_t	i;
 
-	start = read(3, buf, 1024);
-	while (s[start] != 0)
+	i = -1;
+	str = (void *)malloc(size * count);
+	if (!(str))
+		return (NULL);//call clean_and_free
+	while (++i < count)
+		str[i] = '\0';
+	return (str);
+}
+
+char	*ft_strjoin(char *stash, char *buf)
+{
+	char	*str;
+	size_t	i;
+	size_t	j;
+
+	i = -1;
+	j = -1;
+	if (stash == NULL)
 	{
-		if (s[start] == (char)c)
-			break ;
-		start++;
+		stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		if (!stash)
+			return (NULL);//you should call clean_and_free
+		while (buf[++i] != '\0')
+			stash[i] = buf[i];
+		return (stash);
 	}
-	line = (char *)malloc(sizeof(*s) * (start + 1));
-	if (!line)
-		return (NULL);
-	line[start] = 0;
-	while (start--)
-		line[start] = s[start];
-	return (line);
+	i = -1;
+	str= ft_calloc(ft_strlen(stash) + BUFFER_SIZE + 1, sizeof(char));
+	if (!(str))
+		return (NULL);//call clean_and_free
+	while (++i < BUFFER_SIZE)
+		str[i] = stash[i];
+	while (++j < BUFFER_SIZE)
+		str[i + j] = buf[j];
+	return (str);
 }
+
