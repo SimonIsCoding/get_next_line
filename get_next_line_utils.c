@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:45:21 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/09 17:10:45 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/09 19:42:11 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,14 @@ char	*ft_strjoin(char *stash, char *buf)
 			stash[i] = buf[i];
 		return (stash);
 	}
-	i = -1;
-	str= ft_calloc(ft_strlen(stash) + BUFFER_SIZE + 1, sizeof(char));
+	str = ft_calloc(ft_strlen(stash) + BUFFER_SIZE + 1, sizeof(char));
 	if (!(str))
 		return (NULL);//call clean_and_free
-	while (++i < BUFFER_SIZE)
+	while ((int)++i < ft_strlen(stash))
 		str[i] = stash[i];
 	while (++j < BUFFER_SIZE)
 		str[i + j] = buf[j];
 	return (str);
 }
+
 
