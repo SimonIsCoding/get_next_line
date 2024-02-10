@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:45:21 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/10 13:10:49 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/10 19:36:19 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ void	*ft_calloc(size_t count, size_t size)
 	return (str);
 }
 
-char	*ft_strjoin(char *stash, char *buf)
+//Maybe Wrong
+char	*ft_strjoin(char *stash, char *buf, ssize_t read_result)
 {
 	char	*str;
 	size_t	i;
@@ -44,23 +45,30 @@ char	*ft_strjoin(char *stash, char *buf)
 
 	i = -1;
 	j = -1;
+	//on va creer un compteur qui va compter jusqu'a ce que buf soit finit
+	//ce compteur va nous permettre de savoir combien d'espace de stockage a-t-on
+	//besoin pour creer notre malloc
 	if (stash == NULL)
 	{
-		stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		stash = ft_calloc(read_result + 1, sizeof(char));//il me semble que tu as besoin du +1 pour metre le charactere nul de fin 
 		if (!stash)
 			return (NULL);//you should call clean_and_free
-		while (++i < BUFFER_SIZE)
+		while ((int)++i < read_result)
 			stash[i] = buf[i];
 		return (stash);
 	}
-	str = ft_calloc(ft_strlen(stash) + BUFFER_SIZE + 1, sizeof(char));
+	str = ft_calloc(ft_strlen(stash) + read_result + 1, sizeof(char));//le +1 pour le character null est deja integre
 	if (!(str))
 		return (NULL);//call clean_and_free
 	while ((int)++i < ft_strlen(stash))
 		str[i] = stash[i];
-	while (++j < BUFFER_SIZE)
+	while ((ssize_t)++j < read_result)
 		str[i + j] = buf[j];
 	return (str);
 }
 
-
+//il y a un probleme sur la place que tu alloues dans ton buffer
+//si dans le fichier il n'y a qu'1 caractere mais que ton BUFFER_SIZE = 8,
+//il faut que tu alloues 1 + 1 = 2 bytes de memoire => Sinon LEAK
+//il faut que tu trouves une maniere de savoir qu'il n'y a qu'un caractere
+//

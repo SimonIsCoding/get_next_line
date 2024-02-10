@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 12:27:28 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/10 15:59:11 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/10 21:19:53 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 char	*get_next_line(int fd);
 int		ft_strlen(char *s);
 void	*ft_calloc(size_t count, size_t size);
-char	*ft_strjoin(char *stash, char *buf);
+//char	*ft_strjoin(char *stash, char *buf);
+char	*ft_strjoin(char *stash, char *buf, ssize_t read_result);
 
 #endif

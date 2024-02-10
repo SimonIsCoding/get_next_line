@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:40:23 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/10 16:01:33 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/10 21:04:07 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 //at the beginning, the stash is empty => we need to add chars in it
 //we need a function to fill the stash
 
-char	*write_line(char *stash)
+//Maybe Wrong
+char	*write_line(char *stash)//il est possible que ta fonction alloues +1 en trop => verifie bien l'espace
 {
 	char	*line;
 	int		i;
@@ -24,17 +25,22 @@ char	*write_line(char *stash)
 
 	i = 0;
 	j = -1;
-	while (stash[i] != '\n' && i < ft_strlen(stash))
+/*	while (++i < ft_strlen(stash))
+	{
+		if (stash[i] == '\n')
+			break ;
 		i++;
-	line = ft_calloc((i + 2), sizeof(char));
+	}*/
+	while (stash[i] != '\n' && i < ft_strlen(stash))
+		i++;	
+	line = ft_calloc((i + 1 + 1), sizeof(char));
 	if (!line)
 //		return (clean_and_free(line));
 		return (NULL);
 	while (++j < i + 1)
 		line[j] = stash[j];
-//	line[j] = '\0';
 	return (line);
-}//once you use this function in gnl, you should free the line in your main
+}
 
 //si le malloc fail, on veut free tous les emplacement et retourner NULL
 /*char	*clean_and_free(char *s)
@@ -50,7 +56,7 @@ char	*write_line(char *stash)
 	return (NULL);
 }*/
 
-//quelque chose beug avec ta clean stash
+//Maybe wrong
 char	*clean_stash(char *stash)
 {
 	char	*temp;
@@ -65,12 +71,11 @@ char	*clean_stash(char *stash)
 	if (!temp)
 //		return (clean_and_free(temp));
 		return (NULL);
-	len_line = i + 1;
+	len_line = i;// + 1;//est-ce que le fait de mettre +1 retire le dernier caractere NULL ?
 	j = 0;
 	i++;
 	while (j < ft_strlen(stash) - len_line)
 		temp[j++] = stash[i++];
-//	temp[j] = '\0';
 //	free(stash);
 	i = -1;
 	while (++i < j)
@@ -80,7 +85,7 @@ char	*clean_stash(char *stash)
 	return (stash);
 }
 
-int	is_new_line(char *stash)//, int fd, void *buf)
+int	is_new_line(char *stash)
 {
 	int	i;
 
@@ -104,11 +109,15 @@ char	*get_next_line(int fd)
 	if ((read_result <= 0 && stash == NULL) ||
 			(read_result <= 0 && ft_strlen(stash) == 0))
 		return (NULL);
-	stash = ft_strjoin(stash, buf);
+	stash = ft_strjoin(stash, buf, read_result);
 	if (!stash)
 		return (NULL);
 	while (is_new_line(stash) == 0 && read(fd, buf, BUFFER_SIZE) > 0)
-		stash = ft_strjoin(stash, buf);
+	{
+		stash = ft_strjoin(stash, buf, read_result);
+		if (!stash)
+			return (NULL);
+	}
 //	printf("Initial stash : %s\n", stash);
 	line = write_line(stash);
 	if (!line)
