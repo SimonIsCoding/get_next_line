@@ -5,38 +5,82 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/07 12:27:35 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/08 20:09:39 by simarcha         ###   ########.fr       */
+/*   Created: 2024/02/09 15:40:23 by simarcha          #+#    #+#             */
+/*   Updated: 2024/02/10 16:01:33 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
-int	ft_strlen(char *s)
+//at the beginning, the stash is empty => we need to add chars in it
+//we need a function to fill the stash
+
+char	*write_line(char *stash)
+{
+	char	*line;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = -1;
+	while (stash[i] != '\n' && i < ft_strlen(stash))
+		i++;
+	line = ft_calloc((i + 2), sizeof(char));
+	if (!line)
+//		return (clean_and_free(line));
+		return (NULL);
+	while (++j < i + 1)
+		line[j] = stash[j];
+//	line[j] = '\0';
+	return (line);
+}//once you use this function in gnl, you should free the line in your main
+
+//si le malloc fail, on veut free tous les emplacement et retourner NULL
+/*char	*clean_and_free(char *s)
 {
 	int	i;
 
-	i = 0;
-	while (s[i] != '\0')
-		i++;
-	return (i);
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	char	*str;
-	size_t	i;
-
 	i = -1;
-	str = (void *)malloc(size * count);
-	if (!(str))
+	while (++i < ft_strlen(s))
+	{
+		free(s[i]);
+		s[i] = NULL;
+	}
+	return (NULL);
+}*/
+
+//quelque chose beug avec ta clean stash
+char	*clean_stash(char *stash)
+{
+	char	*temp;
+	int		i;
+	int		j;
+	int		len_line;
+
+	i = 0;
+	while (stash[i] != '\n' && i < ft_strlen(stash))//attention a comment tu comptes ton i =>je ne mettrais que i < ft_strlen(stash) car tu free a la fin
+		i++;
+	temp = ft_calloc((ft_strlen(stash) - i + 1), sizeof(char));
+	if (!temp)
+//		return (clean_and_free(temp));
 		return (NULL);
-	while (++i < count)
-		str[i] = '\0';
-	return (str);
+	len_line = i + 1;
+	j = 0;
+	i++;
+	while (j < ft_strlen(stash) - len_line)
+		temp[j++] = stash[i++];
+//	temp[j] = '\0';
+//	free(stash);
+	i = -1;
+	while (++i < j)
+		stash[i] = temp[i];
+	free(temp);
+	stash[i] = '\0';
+	return (stash);
 }
 
-int	is_line_break(char *stash)
+int	is_new_line(char *stash)//, int fd, void *buf)
 {
 	int	i;
 
@@ -47,181 +91,35 @@ int	is_line_break(char *stash)
 	return (0);
 }
 
-char	*ft_strjoin(char *stash, char *buf)
-{
-	char	*str;
-	size_t	i;
-	size_t	j;
-
-	i = -1;
-	j = -1;
-	if (stash == NULL)
-	{
-		stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-		if (!stash)
-			return (NULL);
-		while (buf[++i] != '\0')
-			stash[i] = buf[i];
-		return (stash);
-	}
-	i = -1;
-	str= ft_calloc(ft_strlen(stash) + BUFFER_SIZE + 1, sizeof(char));
-	if (!(str))
-		return (NULL);
-	while (++i < BUFFER_SIZE)
-		str[i] = stash[i];
-	while (++j < BUFFER_SIZE)
-		str[i + j] = buf[j];
-	return (str);
-}
-
-char	*ft_strchr(const char *str, int c)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-	{
-		if ((unsigned char)c == (unsigned char)str[i])
-			return ((char *)str + i);
-		i++;
-	}
-	if ((unsigned char)c == (unsigned char)str[i])
-		return ((char *)str + i);
-	return (NULL);
-}
-
-char	*ft_read(int fd, char *stash)
-{
-	char	buf[BUFFER_SIZE];
-	ssize_t	read_result;
-
-	read_result = read(fd, buf, BUFFER_SIZE);
-	if (read_result == -1 || read_result == 0)
-		return (NULL);
-	stash = ft_strjoin(stash, buf); 
-	return (stash);
-}
-
-//ft_extract doit retourner la stash liberee de sa ligne ecrite
-//doit retourner la nouvelle stash mise a jour une fois apres avoir ecrit la nouvelle ligne
-char	*ft_extract(char **stash)
-{
-	char	*temp;
-	int		i;
-
-	i = 0;
-	while (*stash[i] != '\n')//segfault
-		i++;
-	temp = ft_calloc(ft_strlen(*stash) - i, sizeof(char));//maybe your need + 1
-	if (!temp)
-		return (NULL);
-	i = -1;
-//	temp = ft_strchr(stash, '\n');
-	while (++i < ft_strlen(temp))
-		temp[i] = *stash[i];
-	free(&stash);//does the free can fail ?
-	return (temp);
-}
-
-//On veut juste imprimer la ligne 
-char	*ft_line(char *stash)
-{
-	char	*line;
-	int		i;
-	int		total;
-
-	i = 0;
-	while (stash[i] != '\n' && i < ft_strlen(stash))//ne prends pas le \n en compte donc tu ne l'ecriras pas
-		i++;
-//	while (ft_strchr(stash, '\n') == NULL)
-	total = i;
-	line = ft_calloc(total, sizeof(char));
-	if (!line)
-		return (NULL);
-	i = -1;
-	while (++i < total)
-		line[i] = stash[i];//lors du deuxieme appel, ta stash est vide
-	return (line);
-}
+//we have to call the function read (2) many times in order to stock the other letter in our stash
 
 char	*get_next_line(int fd)
 {
-	static char *stash = NULL;
+	static char	*stash = NULL;
 	char		*line;
-
-	stash = ft_read(fd, stash);
+	char		buf[BUFFER_SIZE];
+	ssize_t		read_result;
+	
+	read_result = read(fd, buf, BUFFER_SIZE); 
+	if ((read_result <= 0 && stash == NULL) ||
+			(read_result <= 0 && ft_strlen(stash) == 0))
+		return (NULL);
+	stash = ft_strjoin(stash, buf);
 	if (!stash)
 		return (NULL);
-	while (is_line_break(stash) == 0)
-		stash = ft_read(fd, stash);//si tu veux augmenter l'espace de ta stash, il faut que tu lui envoies l'adresse => autrement elle se reinitialise a chaque fois
-	line = ft_line(stash);
-//	stash = ft_extract(&stash); =>ton ft_extract renvoie un segfault
+	while (is_new_line(stash) == 0 && read(fd, buf, BUFFER_SIZE) > 0)
+		stash = ft_strjoin(stash, buf);
+//	printf("Initial stash : %s\n", stash);
+	line = write_line(stash);
+	if (!line)
+		return (NULL);//free stash as well
+//	printf("Line          : %s\n", line);
+	stash = clean_stash(stash);
+	if (!stash)
+		return (NULL);
+//	printf("New free stash: %s", stash);*/
 	return (line);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//on veut copier les caracteres de stash dans line jusqua le '\n'
-/*char	*ft_extract(char *stash)
-{
-	int		i;
-	char	*line;
-	char	*temp;
-	int		j;
-
-	i = -1;
-	j = -1;
-	line = (char *)ft_calloc(ft_strlen(stash), sizeof(char));
-	if (!line)
-		return (NULL);
-	while (++i < ft_strlen(stash) && stash[i] != '\n')
-		line[i] = stash[i];
-	temp = (char *)malloc(sizeof(char) * (ft_strlen(stash) - i + 1));
-	if (!temp)
-		return (NULL);
-	while (i < ft_strlen(stash))//try to see what i++ gives
-		temp[++j] = stash[++i];
-	free(stash);
-	stash = (char *)malloc(sizeof(char) * (ft_strlen(temp)));
-	if (!stash)
-		return (NULL);
-	i = -1;
-	while (++i < ft_strlen(temp))
-		stash[i] = temp[i];
-	return (line);
-}*/
+//mon probleme est que ma stash peut contenir des caracteres alors que le resultat de read est <= 0
+//comment gerer ceci

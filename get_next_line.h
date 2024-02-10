@@ -5,23 +5,26 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/30 13:51:15 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/04 13:26:30 by simarcha         ###   ########.fr       */
+/*   Created: 2024/02/07 12:27:28 by simarcha          #+#    #+#             */
+/*   Updated: 2024/02/10 15:59:11 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <stdlib.h>
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 8
+# endif
+
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <unistd.h>
+# include <stdlib.h>
 
 char	*get_next_line(int fd);
-
-char	*ft_strdup(const char *s1);
-char	*ft_strrchr(const char *s, int c);
-char	*ft_read_the_line(char *s, int c);
+int		ft_strlen(char *s);
+void	*ft_calloc(size_t count, size_t size);
+char	*ft_strjoin(char *stash, char *buf);
 
 #endif

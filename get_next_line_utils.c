@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:45:21 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/09 19:42:11 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/10 13:10:49 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*ft_strjoin(char *stash, char *buf)
 		stash = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (!stash)
 			return (NULL);//you should call clean_and_free
-		while (buf[++i] != '\0')
+		while (++i < BUFFER_SIZE)
 			stash[i] = buf[i];
 		return (stash);
 	}
