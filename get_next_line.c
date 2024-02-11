@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:40:23 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/11 14:39:03 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/11 14:51:20 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ char	*clean_stash(char *stash)
 	j = 0;
 	while (j < ft_strlen(stash) - len_line)
 		temp[j++] = stash[++i];//on fait ++i car le i est a la position du caractere '\n'. Donc on l'augmente pour ne pas le prendre
-//	free(stash);
 	i = -1;
 	while (++i < j)
 		stash[i] = temp[i];
@@ -106,10 +105,12 @@ char	*get_next_line(int fd)
 		return (NULL);//free stash as well
 //	printf("Line          : %s\n", line);
 	stash = clean_stash(stash);
-	if (!stash)
-		return (NULL);
+//	if (!stash)
+//		return (NULL);
 //	printf("New free stash: %s", stash);*/
 	free(buf);
+	if (ft_strlen(stash) == 0 && read(fd, buf, BUFFER_SIZE) <= 0)
+		free(stash);
 	return (line);
 }
 
