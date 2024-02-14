@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 11:04:46 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/13 11:13:12 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/13 18:32:37 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static char	*clean_stash(char *stash)
 	free(temp);
 	return (stash);
 }
-
+/*
 char	*gnl_helper(int fd, char *stash, void *buf, ssize_t read_result)
 {
 	read_result = read(fd, buf, BUFFER_SIZE);
@@ -86,36 +86,35 @@ char	*gnl_helper(int fd, char *stash, void *buf, ssize_t read_result)
 		return (NULL);
 	}
 	return (stash);
-}
+}*/
 
 char	*get_next_line(int fd)
 {
 	static char		*stash = NULL;
 	char			*line;
-	static ssize_t	read_result = 0;
+	ssize_t			read_result;
 	void			*buf;
 
 	buf = malloc(BUFFER_SIZE * (sizeof(*buf)));
 	if (!buf)
 		return (NULL);
-/*	read_result = read(fd, buf, BUFFER_SIZE);
+	read_result = 1; 
+	while (!stash || (is_new_line(stash) == 0 && read_result > 0))
+	{
+		read_result = read(fd, buf, BUFFER_SIZE);
+		stash = ft_strjoin(stash, buf, read_result);
+	}
 	if (read_result <= 0 && (stash == NULL || *stash == '\0'))
 	{
 		free(buf);
 		return (NULL);
 	}
-	stash = ft_strjoin(stash, buf, read_result);
 	if (!stash)
 	{
 		free(buf);
 		return (NULL);
-	}*/
-	stash = gnl_helper(fd, stash, buf, read_result);
-	while (is_new_line(stash) == 0 && read_result > 0)
-	{
-		read_result = read(fd, buf, BUFFER_SIZE);
-		stash = ft_strjoin(stash, buf, read_result);
 	}
+//	stash = gnl_helper(fd, stash, buf, read_result);
 	free(buf);
 	line = complete_line(stash);
 	if (!line)
