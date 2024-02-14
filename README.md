@@ -3,7 +3,7 @@ Il rentre dans une boucle "infinie" lorsque le avec "cc -Wall -Wextra -Werror ma
 get_next_line.c -D BUFFER_SIZE=10000000"<br>
 Je dirais que c'est une histoire de buffer et d'allocation memoire. <br>
 Parfois avec la meme compilation mais plusieurs sorties de a.out differentes ne donne pas le meme resultat.<br>
-Il me semble que le probleme est au niveau de la lecture du buffer de la fonctione read (2). J'ajoute a ma variable statique (nommee stash) tous les caracteres du buffer, alors que je pense que je devrais voir s'il y a un saut a la ligne dans ce buffer pour ajouter dans la stash que ce qui se trouve apres le '\n'. Je pense que je devrais aussi utiliser la fonction strchr qui imprime tous les caracters qui il y a apres un caractere en particulier, ici le '\n'<br>
+Il me semble que le probleme est au niveau de la lecture du buffer de la fonction read (2). J'ajoute a ma variable statique (nommee stash) tous les caracteres du buffer, alors que je pense que je devrais voir s'il y a un saut a la ligne dans ce buffer pour ajouter dans la stash que ce qui se trouve apres le '\n'. Je pense que je devrais aussi utiliser la fonction strchr qui imprime tous les caracteres qui se trouve apres un caractere en particulier, ici le '\n'<br>
 <br>
  -fsanitize=address renvoie<br>
  ==30417==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x61b000000d8e at pc 0x00010f5f4159 bp 0x7ffee060e6b0 sp 0x7ffee060e6a8<br>
