@@ -1,7 +1,7 @@
 Parfois le texte est bien imprimé, et parfois il beug.<br>
 Il rentre dans une boucle "infinie" lorsque le avec "cc -Wall -Wextra -Werror main.c get_next_line_utils.c get_next_line.c -D BUFFER_SIZE=21"<br>
 Je dirais que c'est une histoire de buffer et d'allocation memoire. <br>
-Parfois avec la meme compilation mais plusieurs sorties de a.out differentes ne donne pas le meme resultat.<br>
+Parfois avec la meme compilation mais plusieurs sorties de a.out differentes, le programme ne donne pas le meme resultat.<br>
 Il me semble que le probleme est au niveau de la lecture du buffer de la fonction read (2). J'ajoute a ma variable statique (nommee stash) tous les caracteres du buffer, alors que je pense que je devrais voir s'il y a un saut a la ligne dans ce buffer pour ajouter dans la stash que ce qui se trouve apres le '\n'. Je pense que je devrais aussi utiliser la fonction strchr qui imprime tous les caracteres qui se trouve apres un caractere en particulier, ici le '\n'<br>
 <br>
  -fsanitize=address -g renvoie<br>
