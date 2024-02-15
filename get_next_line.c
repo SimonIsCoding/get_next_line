@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 11:04:46 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/15 14:36:02 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/15 15:09:24 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static char	*clean_stash(char *stash)
 		temp[i] = stash[len_line + i];
 	temp[i] = '\0';
 	free(stash);
+	stash = NULL;//is useful ?
 	return (temp);
 }
 
@@ -70,22 +71,21 @@ char	*get_next_line(int fd)
 	ssize_t			read_result;
 	void			*buf;
 
-	buf = malloc((BUFFER_SIZE + 1)* (sizeof(1)));
+	buf = malloc((BUFFER_SIZE + 1) * (sizeof(1)));
 	if (!buf)
 		return (NULL);
-    if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (free(buf), buf = NULL, NULL);
-	read_result = 1; 
+	read_result = 1;
 	while (!stash || (is_new_line(stash) == 0 && read_result > 0))
 	{
 		read_result = read(fd, buf, BUFFER_SIZE);
-	//	buf[read_result] = 0;
 		stash = ft_strjoin(stash, buf, read_result);
 	}
 	if (read_result <= 0 && (stash == NULL || *stash == '\0'))
-        return (free(buf), free(stash), buf = NULL, NULL); 
+		return (free(buf), free(stash), buf = NULL, stash = NULL, NULL);
 	free(buf);
-    buf = NULL;
+	buf = NULL;
 	line = complete_line(stash);
 	if (!line)
 		return (NULL);

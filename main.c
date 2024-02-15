@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 10:15:57 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/14 16:16:30 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/15 14:56:35 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int	main(void)
 		free(line);
 	}
 	printf("line %d : %s", i++, line);
-	//free(line);
 	close(fd);
 	return (0);
 }

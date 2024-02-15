@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 09:50:13 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/12 19:02:12 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/15 15:09:32 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ static void	*ft_calloc(size_t count, size_t size)
 	size_t	i;
 
 	i = -1;
-	str = (void *)malloc(size * count);
+	str = malloc(size * count);
 	if (!(str))
 		return (NULL);
-	while (++i < count)
+	while (++i < (count * size))
 		str[i] = '\0';
 	return (str);
 }
@@ -75,5 +75,6 @@ char	*ft_strjoin(char *stash, char *buf, ssize_t read_result)
 	while (j < (size_t)read_result)
 		str[i++] = buf[j++];
 	free(stash);
+	stash = NULL;//is useful ?
 	return (str);
 }
