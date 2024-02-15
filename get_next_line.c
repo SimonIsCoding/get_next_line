@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 11:04:46 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/13 18:32:37 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/15 14:36:02 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,33 +60,8 @@ static char	*clean_stash(char *stash)
 		temp[i] = stash[len_line + i];
 	temp[i] = '\0';
 	free(stash);
-	stash = malloc(ft_strlen(temp) * sizeof(*stash));
-	if (!stash)
-		return (NULL);
-	i = -1;
-	while (temp[++i] != '\0')
-		stash[i] = temp[i];
-	stash[i] = '\0';
-	free(temp);
-	return (stash);
+	return (temp);
 }
-/*
-char	*gnl_helper(int fd, char *stash, void *buf, ssize_t read_result)
-{
-	read_result = read(fd, buf, BUFFER_SIZE);
-	if (read_result <= 0 && (stash == NULL || *stash == '\0'))
-	{
-		free(buf);
-		return (NULL);
-	}
-	stash = ft_strjoin(stash, buf, read_result);
-	if (!stash)
-	{
-		free(buf);
-		return (NULL);
-	}
-	return (stash);
-}*/
 
 char	*get_next_line(int fd)
 {
@@ -95,32 +70,25 @@ char	*get_next_line(int fd)
 	ssize_t			read_result;
 	void			*buf;
 
-	buf = malloc(BUFFER_SIZE * (sizeof(*buf)));
+	buf = malloc((BUFFER_SIZE + 1)* (sizeof(1)));
 	if (!buf)
 		return (NULL);
+    if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (free(buf), buf = NULL, NULL);
 	read_result = 1; 
 	while (!stash || (is_new_line(stash) == 0 && read_result > 0))
 	{
 		read_result = read(fd, buf, BUFFER_SIZE);
+	//	buf[read_result] = 0;
 		stash = ft_strjoin(stash, buf, read_result);
 	}
 	if (read_result <= 0 && (stash == NULL || *stash == '\0'))
-	{
-		free(buf);
-		return (NULL);
-	}
-	if (!stash)
-	{
-		free(buf);
-		return (NULL);
-	}
-//	stash = gnl_helper(fd, stash, buf, read_result);
+        return (free(buf), free(stash), buf = NULL, NULL); 
 	free(buf);
+    buf = NULL;
 	line = complete_line(stash);
 	if (!line)
 		return (NULL);
 	stash = clean_stash(stash);
-	if (!stash)
-		return (NULL);
 	return (line);
 }
