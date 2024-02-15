@@ -1,3 +1,5 @@
+My Version is not 100% correct => Do not rely on it.Update for 30/03/2024<br>
+<br>
 Parfois le texte est bien imprimé, et parfois il beug.<br>
 Il rentre dans une boucle "infinie" lorsque le avec "cc -Wall -Wextra -Werror main.c get_next_line_utils.c get_next_line.c -D BUFFER_SIZE=21"<br>
 Je dirais que c'est une histoire de buffer et d'allocation memoire. <br>
