@@ -1,3 +1,7 @@
+If I have any advice for my past mistakes doing this project, the bigger one would be:<br>
+You firstly have to check on your buffer (of the read fonction) if it contains a '\n'. I would recommand to use the strchr function to check it. Then add it to the stash.<br>
+My mistake when I was doing it was to think that we add every characters on our static variable and then we check if there is a '\n'. But it gave me TIMEOUT.<br>
+
 My Version is not 100% correct => Do not rely on it. Update planned for 30/03/2024<br>
 <br>
 Parfois le texte est bien imprimé, et parfois il beug.<br>
