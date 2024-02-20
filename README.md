@@ -1,1 +1,1 @@
-The order of your onditions matters !
+The order of your conditions matters !
