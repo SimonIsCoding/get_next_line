@@ -5,90 +5,119 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/12 11:04:46 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/15 15:09:24 by simarcha         ###   ########.fr       */
+/*   Created: 2024/02/15 13:37:50 by simarcha          #+#    #+#             */
+/*   Updated: 2024/02/20 10:58:08 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int	endline_counter(char *stash)
+//we use substr to grab what was in stash and fill the line
+static char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
+	char	*substr;
 	size_t	i;
+	size_t	j;
 
-	i = -1;
-	while (stash[++i] != '\0')
+	i = start;
+	j = 0;
+	if (start > ft_strlen(s))
+		return (ft_strdup(""));
+	j = ft_strlen(s + start);
+	if (len > j)
+		len = j;
+	substr = (char *)malloc(len + 1);
+	if (!s || !substr)
+		return (NULL);
+	j = 0;
+	while (i < ft_strlen(s) && j < len)
+		substr[j++] = s[i++];
+	substr[j] = '\0';
+	return (substr);
+}
+
+//this function helps us to complete the line up to the '\n' character is found 
+static char	*ft_strchr(char *s, int c)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (s[i])
 	{
-		if (stash[i] == '\n')
-		{
-			i++;
-			return (i);
-		}
+		if (s[i] == (char)c)
+			return ((char *)&s[i]);
+		i++;
 	}
-	return (i);
+	if (s[i] == (char)c)
+		return ((char *)&s[i]);
+	return (NULL);
 }
 
-static char	*complete_line(char *stash)
+static char	*clean_stash_and_line(char *line_buf)
 {
-	size_t	i;
-	char	*line;
-	size_t	len_line;
+	char	*stash;
+	ssize_t	i;
 
-	len_line = endline_counter(stash);
-	line = malloc((len_line + 1) * sizeof(*stash));
-	if (!line)
+	i = 0;
+	while (line_buf[i] != '\n' && line_buf[i] != '\0')
+		i++;
+	if (line_buf[i] == 0 || line_buf[1] == 0)
 		return (NULL);
-	i = -1;
-	while (++i < len_line)
-		line[i] = stash[i];
-	line[i] = '\0';
-	return (line);
+	stash = ft_substr(line_buf, i + 1, ft_strlen(line_buf) - i);
+	if (*stash == 0)
+	{
+		free(stash);
+		stash = NULL;
+	}
+	line_buf[i + 1] = 0;
+	return (stash);
 }
 
-static char	*clean_stash(char *stash)
+static char	*complete_stash_and_line(int fd, char *stash, char *buf)
 {
-	char	*temp;
-	size_t	i;
-	size_t	len_line;
+	ssize_t	read_result;
+	char	*tmp;
 
-	len_line = endline_counter(stash);
-	i = -1;
-	temp = malloc((ft_strlen(stash) - len_line + 1) * sizeof(*stash));
-	if (!temp)
-		return (NULL);
-	while (++i < ft_strlen(stash) - len_line + 1)
-		temp[i] = stash[len_line + i];
-	temp[i] = '\0';
-	free(stash);
-	stash = NULL;//is useful ?
-	return (temp);
+	read_result = 1;
+	while (read_result > 0)
+	{
+		read_result = read(fd, buf, BUFFER_SIZE);
+		if (read_result == -1)
+		{
+			free(stash);
+			return (NULL);
+		}
+		else if (read_result == 0)
+			break ;
+		buf[read_result] = 0;
+		if (!stash)
+			stash = ft_strdup("");
+		tmp = stash;
+		stash = ft_strjoin(tmp, buf);
+		free(tmp);
+		tmp = NULL;
+		if (ft_strchr(buf, '\n'))
+			break ;
+	}
+	return (stash);
 }
 
 char	*get_next_line(int fd)
 {
-	static char		*stash = NULL;
-	char			*line;
-	ssize_t			read_result;
-	void			*buf;
+	static char	*stash;
+	char		*line;
+	char		*buf;
 
-	buf = malloc((BUFFER_SIZE + 1) * (sizeof(1)));
+	buf = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (free(stash), free(buf), stash = NULL, buf = NULL, NULL);
 	if (!buf)
 		return (NULL);
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (free(buf), buf = NULL, NULL);
-	read_result = 1;
-	while (!stash || (is_new_line(stash) == 0 && read_result > 0))
-	{
-		read_result = read(fd, buf, BUFFER_SIZE);
-		stash = ft_strjoin(stash, buf, read_result);
-	}
-	if (read_result <= 0 && (stash == NULL || *stash == '\0'))
-		return (free(buf), free(stash), buf = NULL, stash = NULL, NULL);
+	line = complete_stash_and_line(fd, stash, buf);
 	free(buf);
 	buf = NULL;
-	line = complete_line(stash);
 	if (!line)
 		return (NULL);
-	stash = clean_stash(stash);
+	stash = clean_stash_and_line(line);
 	return (line);
 }

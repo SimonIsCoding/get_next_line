@@ -6,7 +6,7 @@
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 10:15:57 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/15 14:56:35 by simarcha         ###   ########.fr       */
+/*   Updated: 2024/02/20 10:57:57 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,17 @@ int	main(void)
 	return (0);
 }
 /*
-static int	shift(int i)
+static int	shift()
 {
-	i = 5;
+	int i = 0;
+	i++;
 	return (i);
 }
-
 int	main(void)
 {
-	static int i;
-
-	i = 3;
-	printf("first call : %i\n", i);
-	i = shift(i);
-	printf("second call : %i\n", i);
-
+	shift();
+	printf("first call : %d\n", shift());
+	shift();
+	printf("second call : %d", shift());
 	return (0);
 }*/

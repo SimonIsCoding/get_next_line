@@ -5,14 +5,31 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: simarcha <simarcha@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/12 09:50:13 by simarcha          #+#    #+#             */
-/*   Updated: 2024/02/15 15:09:32 by simarcha         ###   ########.fr       */
+/*   Created: 2024/02/14 16:07:29 by simarcha          #+#    #+#             */
+/*   Updated: 2024/02/15 15:26:00 by simarcha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *s)
+//this functions will help us onlly in one case: to initialize stash when it
+//doesn't exist
+char	*ft_strdup(const char *str)
+{
+	char	*dst;
+	size_t	i;
+
+	i = -1;
+	dst = (char *)malloc((ft_strlen(str) + 1) * sizeof(char));
+	if (!dst)
+		return (NULL);
+	while (str[++i] != '\0')
+		dst[i] = str[i];
+	dst[i] = '\0';
+	return (dst);
+}
+
+size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 
@@ -22,59 +39,29 @@ size_t	ft_strlen(char *s)
 	return (i);
 }
 
-int	is_new_line(char *stash)
+//this function will help us to join the characters read from the file with the
+//stash 
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int	i;
+	char	*str;
+	int		i;
+	int		j;
 
 	i = 0;
-	while (stash[i] != '\0')
-	{
-		if (stash[i] == '\n')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-static void	*ft_calloc(size_t count, size_t size)
-{
-	char	*str;
-	size_t	i;
-
-	i = -1;
-	str = malloc(size * count);
+	j = 0;
+	str = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!(str))
 		return (NULL);
-	while (++i < (count * size))
-		str[i] = '\0';
-	return (str);
-}
-
-char	*ft_strjoin(char *stash, char *buf, ssize_t read_result)
-{
-	char	*str;
-	size_t	i;
-	size_t	j;
-
-	i = -1;
-	j = 0;
-	if (!stash)
+	while (s1[i] != '\0')
 	{
-		str = ft_calloc((read_result + 1), sizeof(char));
-		if (!str)
-			return (NULL);
-		while (buf[++i] != '\0')
-			str[i] = buf[i];
-		return (str);
+		str[i] = s1[i];
+		i++;
 	}
-	str = ft_calloc((ft_strlen(stash) + read_result + 1), sizeof(char));
-	if (!str)
-		return (NULL);
-	while (++i < ft_strlen(stash))
-		str[i] = stash[i];
-	while (j < (size_t)read_result)
-		str[i++] = buf[j++];
-	free(stash);
-	stash = NULL;//is useful ?
+	while (s2[j] != '\0')
+	{
+		str[i + j] = s2[j];
+		j++;
+	}
+	str[i + j] = '\0';
 	return (str);
 }
